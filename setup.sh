@@ -5,7 +5,8 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Step 2: Install dependencies
-pip install -r requirements.txt
+pip install --pre opengate
+pip install dearpygui
 
 # Step 3: Export necessary environment variables
 LD_LIBRARY_PATH=$(pwd)/venv/lib/python3.11/site-packages/opengate_core.libs:${LD_LIBRARY_PATH}
