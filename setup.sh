@@ -6,6 +6,7 @@ source venv/bin/activate
 
 # Step 2: Install dependencies
 pip install --pre opengate
+pip install pyvista
 pip install dearpygui
 
 # Step 3: Export necessary environment variables
