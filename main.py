@@ -1,67 +1,176 @@
-import opengate as gate
 import dearpygui.dearpygui as dpg
+import opengate as gate
 
+
+simulation: gate.Simulation
 
 def main():
-    # Setup DearPyGui Window
     dpg.create_context()
-    # Gate simulation window
-    with dpg.window(label="Gate Simulation", tag="gate_control_window", height=500, width=700):
-        dpg.add_text("Welcome to gate-wrapper!")
-        # Verbose Level (essential setting)
-        dpg.add_combo(items=["NONE", "INFO", "DEBUG"], default_value="INFO", label="Verbose Level", tag='verbose_level')
-        # Random Engine and Seed (common requirement)
-        dpg.add_combo(label="Random Engine", items=["MixMaxRng", "MersenneTwister"], default_value="MersenneTwister", tag='random_engine_combo')
-        dpg.add_input_text(label="Random Seed", default_value="auto", tag='random_seed')
-        # Multithreading (if your simulation benefits from multiple threads)
-        dpg.add_input_int(label="Number of Threads", default_value=1, min_value=1, max_value=4, tag='threads_input')
-        # Visualization settings
-        dpg.add_checkbox(label="Enable Visualization", tag='visu_checkbox')
-        dpg.add_input_text(label="Visualization Output Filename", default_value="./output.vrml", tag='visu_filename')
-        # Button to start simulation
-        dpg.add_button(label="Start Simulation", callback=run_simulation)
-        # Status text
-        dpg.add_text("Status: Ready", tag="status_text")
+    dpg.create_viewport(title="Gate wrapper", width=800, height=600)
 
-    with dpg.window(label="Volume manager", tag="volumes_window", height=300, width=300):
-        dpg.add_combo(label="Volumes", tag="volumes_combo")
+    # Simulation Manager window
+    with dpg.window(label="1. Simulation Manager", width=600, height=400):
+        dpg.add_text("Step 1")
+        dpg.add_input_text(label="Simulation name", tag="user_info_name", default_value="simulation")
 
-    dpg.set_item_pos("volumes_window", [50, 50])
-    dpg.set_item_pos("gate_control_window", [400, 50])
+        with dpg.collapsing_header(label="GATE Verbosity"):
+            dpg.add_combo(label="Verbose level", tag="user_info_verbose_level", items=["NONE", "INFO", "DEBUG"], default_value="INFO")
+            dpg.add_combo(label="Running verbose level", tag="user_info_running_verbose_level", items=["0", "1", "2"], default_value="0")
 
-    dpg.create_viewport(title='Simulation Viewer', width=1150, height=600)
+        with dpg.collapsing_header(label="Geant4 Verbosity"):
+            dpg.add_checkbox(label="Geant4 verbose system", tag="user_info_g4_verbose", default_value=False)
+            dpg.add_combo(label="Geant4 verbose level", tag="user_info_g4_verbose_level", items=["0", "1", "2"], default_value="0")
+
+        dpg.add_checkbox(label="Visualisation", tag="user_info_visu", default_value=False)
+
+        with dpg.collapsing_header(label="Random Number Generator"):
+            dpg.add_combo(label="Random engine", tag="user_info_random_engine", items=["MixMaxRng", "MersenneTwister"], default_value="MersenneTwister")
+            dpg.add_input_text(label="Random seed", tag="user_info_random_seed", default_value="auto")
+
+        dpg.add_button(label="Create Simulation", callback=create_simulation_manager)
+
+        # Sub-managers: physics, actor and source
+
+        dpg.add_text("Step 2")
+        dpg.add_button(label="Run Simulation", callback=run_simulation)
+        dpg.add_text("Status: ", tag="status_text")
+
+    # Volume Manager window
+    with dpg.window(label="2. Volume Manager", width=600, height=400):
+        with dpg.table(tag="volume_table", header_row=True):
+            dpg.add_table_column(label="Volume Name")
+
+        dpg.add_button(label="List Volumes", callback=list_volumes)
+
+        dpg.add_combo(label="Volume type", tag="volume_type", items=["Box", "Sphere"], default_value="Box")
+        dpg.add_input_text(label="Volume name", tag="volume_name")
+        dpg.add_combo(label="Volume material", tag="volume_material", items=["G4_WATER", "G4_AIR"], default_value="G4_WATER")
+
+        dpg.add_slider_float(label="Volume size (mm)", tag="volume_size", min_value=1.0, max_value=100.0, default_value=50.0)
+
+        dpg.add_slider_float(label="Position X", tag="volume_position_x", min_value=-100.0, max_value=100.0, default_value=0.0)
+        dpg.add_slider_float(label="Position Y", tag="volume_position_y", min_value=-100.0, max_value=100.0, default_value=0.0)
+        dpg.add_slider_float(label="Position Z", tag="volume_position_z", min_value=-100.0, max_value=100.0, default_value=0.0)
+
+        dpg.add_button(label="Create Volume", callback=create_volume)
+        dpg.add_button(label="Update Volume", callback=update_volume)
+        dpg.add_button(label="Delete Volume", callback=delete_volume)
+        dpg.add_text("Volume Status: ", tag="volume_status")
+
     dpg.setup_dearpygui()
     dpg.show_viewport()
     dpg.start_dearpygui()
     dpg.destroy_context()
 
 
+def create_simulation_manager():
+    # Basic simulation setup and configuration
+    name = dpg.get_value("user_info_name")
+    global simulation
+    simulation = gate.Simulation(name)
+
+    # Setting simulation parameters from user input
+    user_info = simulation.user_info
+    user_info['verbose_level'] = dpg.get_value("user_info_verbose_level")
+    user_info['running_verbose_level'] = int(dpg.get_value("user_info_running_verbose_level"))
+    if dpg.get_value("user_info_g4_verbose"):
+        user_info['g4_verbose'] = dpg.get_value("user_info_g4_verbose")
+        user_info['g4_verbose_level'] = int(dpg.get_value("user_info_g4_verbose_level"))
+    user_info['visu'] = dpg.get_value("user_info_visu")
+    user_info['random_engine'] = dpg.get_value("user_info_random_engine")
+    if dpg.get_value("user_info_random_seed") != "auto":
+        user_info['random_seed'] = int(dpg.get_value("user_info_random_seed"))
+    simulation.user_info = user_info
+
 def run_simulation():
-    # Get user-defined values from DearPyGui
-    verbose_level: str = dpg.get_value('verbose_level')
-    random_engine = dpg.get_value('random_engine_combo')
-    random_seed =   dpg.get_value('random_seed')
-    num_threads = dpg.get_value('threads_input')
-    visu_enabled = dpg.get_value('visu_checkbox')
-    visu_filename = dpg.get_value('visu_filename')
-
-    # Setup simulation with user-defined parameters
-    sim = gate.Simulation()
-    sim.verbose_level = verbose_level
-    sim.random_engine = random_engine
-    sim.number_of_threads = num_threads
-    if random_seed != "auto": sim.random_seed = int(random_seed)
-    sim.visu = visu_enabled
-    if visu_enabled: sim.visu_filename = visu_filename
-
-    # Start the simulation
     try:
-        print("Running OpenGate Simulation...")
-        sim.run()
-        dpg.set_value("status_text", "Simulation Complete!")
+        simulation.run()
+        dpg.set_value("status_text", "Status: Simulation Complete!")
     except Exception as e:
-        print(f"Simulation failed: {str(e)}")
-        dpg.set_value("status_text", f"Simulation Error: {str(e)}")
+        dpg.set_value("status_text", f"Status: Simulation Failed! Error: {str(e)}")
+
+
+def create_volume():
+    global simulation
+    if simulation is None:
+        dpg.set_value("volume_status", "Error: Simulation not initialized!")
+        return
+
+    # Retrieve volume details from the GUI
+    volume_name = dpg.get_value("volume_name").strip()
+    if not volume_name:
+        dpg.set_value("volume_status", "Error: Volume name is required!")
+        return
+
+    volume_type = dpg.get_value("volume_type")
+    volume_material = dpg.get_value("volume_material")
+    size = [dpg.get_value("volume_size")] * 3
+
+    pos_x = dpg.get_value("volume_position_x")
+    pos_y = dpg.get_value("volume_position_y")
+    pos_z = dpg.get_value("volume_position_z")
+
+    try:
+        # Access volume_manager from the simulation object
+        volume_manager = simulation.volume_manager
+        volume = volume_manager.add_volume(volume_type, volume_name)
+        volume.material = volume_material
+        volume.size = size
+        volume.translation = [pos_x, pos_y, pos_z]
+
+        dpg.set_value("volume_status", f"Volume '{volume_name}' created successfully.")
+    except Exception as e:
+        dpg.set_value("volume_status", f"Error creating volume: {str(e)}")
+
+
+def list_volumes():
+    global simulation
+    if simulation is None:
+        dpg.set_value("volume_status", "Error: Simulation not initialized!")
+        return
+
+    try:
+        volume_manager = simulation.volume_manager
+        volumes = volume_manager.volumes  # Ensure this returns a dict or list of volume names
+
+        # Clear previous list if exists
+        if dpg.does_item_exist("volume_table"):
+            dpg.delete_item("volume_table", children_only=True)
+
+        # Add volumes to the table dynamically
+        for vol_name in volumes:
+            with dpg.table_row(parent="volume_table"):
+                dpg.add_text(vol_name)
+
+    except Exception as e:
+        dpg.set_value("volume_status", f"Error retrieving volumes: {str(e)}")
+
+
+def select_volume(sender, app_data, user_data):
+    volume_name = user_data
+    load_volume_details(volume_name)
+
+
+def load_volume_details(volume_name):
+    global simulation
+    volume_manager = simulation.volume_manager
+    volume = volume_manager.get_volume(volume_name)
+
+    # Assuming the volume object has size and translation attributes
+    dpg.set_value("volume_name", volume_name)
+    dpg.set_value("volume_size", volume.size[0])  # Adjust for box shape
+    dpg.set_value("volume_position_x", volume.translation[0])
+    dpg.set_value("volume_position_y", volume.translation[1])
+    dpg.set_value("volume_position_z", volume.translation[2])
+
+def update_volume():
+    # Placeholder logic for updating volumes
+    dpg.set_value("volume_status", "Volume Updated")
+
+
+def delete_volume():
+    # Placeholder logic for deleting volumes
+    dpg.set_value("volume_status", "Volume Deleted")
 
 
 if __name__ == "__main__":
