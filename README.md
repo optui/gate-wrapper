@@ -10,14 +10,11 @@ A python wrapper for the GATE (v10) software, part of the OpenGATE collaboration
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
   - [Installation Steps](#installation-steps)
-- [Documentation](#documentation)
-  - [Main Functionalities](#main-functionalities)
-    - [Simulation Manager](#simulation-manager)
-    - [Simulation Control](#simulation-control)
-    - [Volume Manager](#volume-manager)
-    - [Sources Manager](#sources-manager)
-    - [Material Manager](#material-manager)
-    - [Detector Manager](#detector-manager)
+- [Functionalities](#functionalities)
+  - [Simulation manager](#simulation-manager)
+  - [Volume manager](#volume-manager)
+  - [Physics manager](#physics-manager)
+  - [Sources manager](#sources-manager)
 - [Milestones](#milestones)
 
 ## Sources
@@ -64,53 +61,25 @@ The following specifications were used during development and testing:
 
 > Note: If you encounter the error `opengate_core is not detected`, you may need to export the necessary library paths as indicated in the error message.
 
-## Documentation
+## Functionalities
 
-### Main functionalities
-
-#### Simulation manager
+### Simulation manager
 
 - Set simulation name
 - Set simulation verbosity
 - Set simulation visualisation
 - Set simulation multithreading
-- Physics settings
-    - Set physics list
-    - Set cutoff thresholds
-    - Set interactions
 
-#### Simulation control
+### Volume manager
 
-- Run, pause/resume and stop simulation
+- Create, read, update, delete volumes
+- Transformations (translation, scaling)
 
-#### Volume manager
+### Physics manager
 
-- Create volume
-    - Translate and scale volumes
-- Read volumes
-- Update volume
-- Delete volume
+### Actor manager
 
-#### Sources manager
-
-- Create source
-- Read sources
-- Update source
-- Delete source
-
-#### Material manager
-
-- Create material
-- Read materials
-- Update material
-- Delete material
-
-#### Detector manager
-
-- Create detector
-- Read detector
-- Update detector
-- Delete detector
+### Sources manager
 
 ## Milestones
 
@@ -118,7 +87,7 @@ The following specifications were used during development and testing:
 
 - From: 2024.09.30.
 - To: 2024.10.13.
-- Info: scoping
+- Info: implement simulation, volume, physics, actor and sources manager
 
 ### Milestone 2
 
