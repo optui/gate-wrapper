@@ -29,7 +29,7 @@ def create_simulation_manager():
 def run_simulation():
     global simulation
     try:
-        simulation.run()
+        simulation.run(True)
         dpg.set_value("status_text", "Status: Simulation Complete!")
     except Exception as e:
         dpg.set_value("status_text", f"Status: Simulation Failed! Error: {str(e)}")
