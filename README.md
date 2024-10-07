@@ -66,9 +66,7 @@ The following specifications were used during development and testing:
 ### Simulation manager
 
 - Set simulation name
-- Set simulation verbosity
-- Set simulation visualisation
-- Set simulation multithreading
+- Set simulation parameters via `user_info`
 
 ### Volume manager
 
@@ -87,13 +85,17 @@ The following specifications were used during development and testing:
 
 - From: 2024.09.30.
 - To: 2024.10.13.
-- Info: implement simulation, volume, physics, actor and sources manager
+- Info:
+  - implement core manager: simulation
+  - implement sub-managers: volume, physics, actor and sources
 
 ### Milestone 2
 
 - From: 2024.10.14.
 - To: 2024.10.27.
-- Info: ...
+- Info:
+  - implement a live editor
+  - implement volume scaling and transformation via live editor
 
 ### Milestone 3
 
