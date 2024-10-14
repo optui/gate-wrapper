@@ -10,4 +10,4 @@ export LD_LIBRARY_PATH
 export LD_PRELOAD
 
 # Step 3: Run the Python script
-python3 main.py
+python3 src/main.py
