@@ -50,12 +50,14 @@ class SimulationModel:
     def run(self):
         self.simulation.run(True)
 
+
 class VolumeModel:
     def __init__(self, volume_manager):
         self.volume_manager: gate.managers.VolumeManager = volume_manager
 
     def get_volumes(self):
         return list(self.volume_manager.volumes.keys())
+
 
 class SourceModel:
     def __init__(self, source_manager):
@@ -70,7 +72,3 @@ class ActorModel:
 class PhysicsModel:
     def __init__(self, physics_manager):
         self.physics_manager = physics_manager
-
-class FilterModel:
-    def __init__(self, filter_manager):
-        self.filter_manager = filter_manager
