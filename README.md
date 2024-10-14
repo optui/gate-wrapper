@@ -2,21 +2,6 @@
 
 A python wrapper for the GATE (v10) software, part of the OpenGATE collaboration. It features a Dear PyGui interface to manage and visualize medical simulations. GATE is built on top of the GEANT4 toolkit and is used for medical imaging simulations such as PET, SPECT, CT, and radiotherapy.
 
-## Table of Contents
-
-- [Gate Wrapper](#gate-wrapper)
-- [Sources](#sources)
-- [Build Environment](#build-environment)
-- [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  - [Installation Steps](#installation-steps)
-- [Functionalities](#functionalities)
-  - [Simulation manager](#simulation-manager)
-  - [Volume manager](#volume-manager)
-  - [Physics manager](#physics-manager)
-  - [Sources manager](#sources-manager)
-- [Milestones](#milestones)
-
 ## Sources
 
 - [OpenGATE collaboration](http://www.opengatecollaboration.org/)
@@ -36,9 +21,7 @@ The following specifications were used during development and testing:
 
 ### Prerequisites
 
-- [GATE](https://opengate-python.readthedocs.io/en/latest/index.html)
-  - [User Installation Guide](https://opengate-python.readthedocs.io/en/latest/user_guide.html#installation-for-users-not-for-developers)
-  - [Developer Installation Guide](https://opengate-python.readthedocs.io/en/latest/developer_guide.html#installation-for-developers)
+- [GATE v10](https://opengate-python.readthedocs.io/en/latest/user_guide.html#installation-for-users-not-for-developers)
 - [Dear PyGui](https://dearpygui.readthedocs.io/en/latest/tutorials/first-steps.html)
 
 ### Installation Steps
@@ -61,74 +44,8 @@ The following specifications were used during development and testing:
 
 > Note: If you encounter the error `opengate_core is not detected`, you may need to export the necessary library paths as indicated in the error message.
 
-## Functionalities
+## Further reading
 
-### Simulation manager
-
-- Set simulation name
-- Set simulation parameters via `user_info`
-
-### Volume manager
-
-- Create, read, update, delete volumes
-- Transformations (translation, scaling)
-
-### Physics manager
-
-### Actor manager
-
-### Sources manager
-
-## Milestones
-
-### Milestone 1
-
-- From: 2024.09.30.
-- To: 2024.10.13.
-- Info:
-  - implement core manager: simulation
-  - implement sub-managers: volume, physics, actor and sources
-
-### Milestone 2
-
-- From: 2024.10.14.
-- To: 2024.10.27.
-- Info:
-  - implement a live editor
-  - implement volume scaling and transformation via live editor
-
-### Milestone 3
-
-- From: 2024.10.28.
-- To: 2024.11.10.
-- Info: ...
-
-### Milestone 4
-
-- From: 2024.11.11.
-- To: 2024.11.24.
-- Info: ...
-
-### Milestone 5
-
-- From: 2024.11.25.
-- To: 2024.12.08.
-- Info: ...
-
-### Milestone 6
-
-- From: 2024.12.09.
-- To: 2024.12.22.
-- Info: ...
-
-### Milestone 7
-
-- From: 2024.12.23.
-- To: 2025.01.06.
-- Info: ...
-
-### Milestone 8
-
-- From: 2025.01.07.
-- To: 2025.01.20.
-- Info: finish
+- [Issues](https://github.com/optui/gate-wrapper/issues)
+- [Milestones](https://github.com/optui/gate-wrapper/milestones)
+- [Design documentation](./docs/design.md)
